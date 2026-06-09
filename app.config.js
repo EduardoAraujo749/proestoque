@@ -7,6 +7,10 @@ module.exports = {
     extra: {
       ...(appJson.expo?.extra ?? {}),
       apiUrl: process.env.EXPO_PUBLIC_API_URL ?? "http://192.168.1.2:3333/api",
+      eas: {
+        ...(appJson.expo?.extra?.eas ?? {}),
+        projectId: "e389d585-73be-4003-b2db-e9dcea0ad510",
+      },
     },
   },
 };

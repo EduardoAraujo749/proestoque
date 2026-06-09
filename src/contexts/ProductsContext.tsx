@@ -2,6 +2,10 @@ import { useAuth } from "@/src/contexts/AuthContext";
 import type { Produto } from "@/src/data/mockData";
 import type { ProdutoFormData } from "@/src/schemas/produtoSchema";
 import { api } from "@/src/services/api";
+import {
+    limparBadge,
+    notificarEstoqueCritico,
+} from "@/src/services/notifications";
 import { createContext, useCallback, useContext, useEffect, useMemo, useReducer } from "react";
 export type { Produto } from "@/src/data/mockData";
 
@@ -78,6 +82,14 @@ export function ProductsProvider({ children }: { children: React.ReactNode }) {
     try {
       const { data } = await api.get<Produto[]>("/produtos");
       dispatch({ type: "LOAD_SUCCESS", payload: data });
+
+      // Verificar alertas de estoque crítico e notificar
+      const criticos = data.filter((p) => p.quantidade < p.quantidadeMinima);
+      if (criticos.length > 0) {
+        await notificarEstoqueCritico(criticos);
+      } else {
+        await limparBadge();
+      }
     } catch (error) {
       const mensagem = error instanceof Error ? error.message : "Erro ao carregar produtos";
       dispatch({ type: "LOAD_ERROR", payload: mensagem });

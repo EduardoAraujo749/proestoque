@@ -4,7 +4,7 @@ import { router } from "expo-router";
 import { useCallback, useMemo, useState } from "react";
 import { FlatList, RefreshControl, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { ErrorView } from "../../src/components/ErrorView";
-import { LoadingView } from "../../src/components/LoadingView";
+import { ProdutoListaSkeleton } from "../../src/components/ProdutoSkeleton";
 import { useAuth } from "../../src/contexts/AuthContext";
 import { useProducts, type Produto } from "../../src/contexts/ProductsContext";
 import { useCategorias, type Categoria } from "../../src/hooks/useCategorias";
@@ -228,7 +228,14 @@ export default function HomeScreen() {
   };
 
   if (isLoading && produtos.length === 0) {
-    return <LoadingView mensagem="Carregando dashboard..." />;
+    return (
+      <FlatList
+        ListHeaderComponent={<ProdutoListaSkeleton count={7} />}
+        data={[]}
+        renderItem={() => null}
+        keyExtractor={() => "empty"}
+      />
+    );
   }
 
   if (error && produtos.length === 0) {

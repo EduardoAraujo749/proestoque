@@ -6,7 +6,7 @@ import { useMemo, useState } from "react";
 import { FlatList, Image, RefreshControl, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ErrorView } from "../../../src/components/ErrorView";
-import { LoadingView } from "../../../src/components/LoadingView";
+import { ProdutoListaSkeleton } from "../../../src/components/ProdutoSkeleton";
 import { useProducts, type Produto } from "../../../src/contexts/ProductsContext";
 import { useCategorias, type Categoria } from "../../../src/hooks/useCategorias";
 
@@ -69,7 +69,11 @@ export default function ProdutosScreen() {
   };
 
   if (isLoading && produtos.length === 0) {
-    return <LoadingView mensagem="Carregando produtos..." />;
+    return (
+      <SafeAreaView style={styles.safe} edges={["bottom"]}>
+        <ProdutoListaSkeleton count={7} />
+      </SafeAreaView>
+    );
   }
 
   if (error && produtos.length === 0) {

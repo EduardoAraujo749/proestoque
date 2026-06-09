@@ -1,6 +1,11 @@
 import SplashScreen from "@/src/components/SplashScreen";
 import { AuthProvider, useAuth } from "@/src/contexts/AuthContext";
 import { ProductsProvider } from "@/src/contexts/ProductsContext";
+import {
+    agendarVerificacaoDiaria,
+    limparBadge,
+    solicitarPermissaoNotificacoes,
+} from "@/src/services/notifications";
 import { Stack, useRouter, useSegments } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useEffect, useState } from "react";
@@ -23,6 +28,22 @@ function NavigationGuard() {
 
     return () => clearTimeout(timeout);
   }, []);
+
+  // Configurar notificações quando usuário se autentica
+  useEffect(() => {
+    async function configurarNotificacoes() {
+      const temPermissao = await solicitarPermissaoNotificacoes();
+      if (temPermissao) {
+        await agendarVerificacaoDiaria();
+      } else {
+        await limparBadge();
+      }
+    }
+
+    if (isAuthenticated) {
+      configurarNotificacoes();
+    }
+  }, [isAuthenticated]);
 
   useEffect(() => {
     if (isLoading || !minimumSplashElapsed) {
