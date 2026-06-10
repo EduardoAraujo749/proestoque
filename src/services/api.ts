@@ -1,7 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import Constants from "expo-constants";
-import { Platform } from "react-native";
 
 type UnauthorizedHandler = (() => void | Promise<void>) | null;
 
@@ -12,8 +11,9 @@ export function setUnauthorizedHandler(handler: UnauthorizedHandler) {
 }
 
 const API_BASE_URL =
+  (process.env.EXPO_PUBLIC_API_URL as string | undefined) ??
   (Constants.expoConfig?.extra?.apiUrl as string | undefined) ??
-  (Platform.OS === "android" ? "http://192.168.1.2:3333/api" : "http://192.168.1.2:3333/api");
+  "https://proestoque-api-production.up.railway.app/api";
 
 export const api = axios.create({
   baseURL: API_BASE_URL,
